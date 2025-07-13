@@ -80,7 +80,7 @@ def compute_f2(c):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) >= 1:
+    if len(sys.argv) > 1:
         n = int(sys.argv[1])
         v = generate_coalition_values(n)
 
