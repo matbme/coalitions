@@ -1,4 +1,6 @@
 # pyright: basic
+import itertools
+import random
 import sys
 from pprint import pprint
 
@@ -27,6 +29,17 @@ v = {
 
 n = 4
 
+
+def generate_coalition_values(n):
+    coalition_values = {}
+    for r in range(1, n + 1):
+        for coalition in itertools.combinations(range(n), r):
+            coalition_value = random.randint(1, 100)
+            coalition_values[tuple(map(lambda x: x + 1, coalition))] = coalition_value
+
+    return coalition_values
+
+
 f1 = {}
 f2 = {}
 
@@ -35,7 +48,6 @@ comps = 0
 
 def compute_f2(c):
     global comps
-    comps += 1
 
     if not f2.get(c):
         print(f"f2 for {c} not found! Calculating.")
@@ -44,16 +56,19 @@ def compute_f2(c):
         for l, r in set_partitions(c, 2):
             print(f"Partitioned set into {l} and {r}")
 
+            # E*
             if len(r) > n - (len(l) + len(r)) and len(l) + len(r) != n:
                 print("Ignoring set partition")
                 continue
+
+            comps += 1
 
             f2_part = compute_f2(tuple(l)) + compute_f2(tuple(r))
             if f2_part >= max_f2_part:
                 max_f2_part = f2_part
                 max_f2_elem = tuple(l)  # Or r, doesn't matter. See footnote 3.
 
-        f2[tuple(sorted(l + r))] = max_f2_part
+        f2[tuple(c)] = max_f2_part
 
         print(f"f2[{c}] = {f2[c]}, v[{c}] = {v[c]}")
         if f2[c] >= v[c]:
@@ -71,6 +86,10 @@ def compute_f2(c):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) >= 1:
+        n = int(sys.argv[1])
+        v = generate_coalition_values(n)
+
     # For all i in {1,...,n}, set f1[{ai}]:={ai}, f2[ai]:=v[{ai}]
     for i in range(1, n + 1):
         f1[(i,)] = (i,)
@@ -108,6 +127,6 @@ if __name__ == "__main__":
             break
 
     print(
-        f"\nOptimal coalition structure is {css} with value {sum(f2[c] for c in css)}"
+        f"\nOptimal coalition structure is {sorted(css)} with value {sum(f2[c] for c in css)}"
     )
     print(f"Finished with {comps} splittings")

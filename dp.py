@@ -32,17 +32,11 @@ n = 4
 
 
 def generate_coalition_values(n):
-    # Initialize a dictionary to store coalition values
     coalition_values = {}
-
-    # Iterate through all possible coalitions (subsets of agents)
-    for r in range(
-        2, n + 1
-    ):  # r starts from 2 to exclude empty coalition and singletons
+    for r in range(1, n + 1):
         for coalition in itertools.combinations(range(n), r):
-            # Randomly generate a value for the coalition (you can scale this if needed)
-            coalition_value = random.randint(1, 100)  # Random value between 1 and 100
-            coalition_values[coalition] = coalition_value
+            coalition_value = random.randint(1, 100)
+            coalition_values[tuple(map(lambda x: x + 1, coalition))] = coalition_value
 
     return coalition_values
 
@@ -55,20 +49,20 @@ comps = 0
 
 def compute_f2(c):
     global comps
-    comps += 1
 
     if not f2.get(c):
         print(f"f2 for {c} not found! Calculating.")
         max_f2_part = -sys.maxsize - 1
         max_f2_elem = ()
         for l, r in set_partitions(c, 2):
+            comps += 1
             print(f"Partitioned set into {l} and {r}")
             f2_part = compute_f2(tuple(l)) + compute_f2(tuple(r))
             if f2_part >= max_f2_part:
                 max_f2_part = f2_part
                 max_f2_elem = tuple(l)  # Or r, doesn't matter. See footnote 3.
 
-        f2[tuple(sorted(l + r))] = max_f2_part
+        f2[tuple(c)] = max_f2_part
 
         print(f"f2[{c}] = {f2[c]}, v[{c}] = {v[c]}")
         if f2[c] >= v[c]:
@@ -86,6 +80,10 @@ def compute_f2(c):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) >= 1:
+        n = int(sys.argv[1])
+        v = generate_coalition_values(n)
+
     # For all i in {1,...,n}, set f1[{ai}]:={ai}, f2[ai]:=v[{ai}]
     for i in range(1, n + 1):
         f1[(i,)] = (i,)
@@ -123,6 +121,6 @@ if __name__ == "__main__":
             break
 
     print(
-        f"\nOptimal coalition structure is {css} with value {sum(f2[c] for c in css)}"
+        f"\nOptimal coalition structure is {sorted(css)} with value {sum(f2[c] for c in css)}"
     )
     print(f"Finished with {comps} splittings")
