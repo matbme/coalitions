@@ -20,25 +20,53 @@ def calculate_nss(s: int) -> int:
     return result
 
 
+def calculate_nss_idp(s: int) -> int:
+    result = 0
+    for spp in range(ceil(s / 2), s):
+        if spp <= n - s:
+            continue
+
+        if (s - spp) == spp:
+            result += possible_subsets(s, spp) // 2
+        else:
+            result += possible_subsets(s, spp)
+
+    return result
+
+
 x = []
-y = []
+t_plt = []
+d_plt = []
+
 for s in range(1, n + 1):
-    t = 0
     cns = possible_subsets(n, s)
     nss = calculate_nss(s)
-    print(f"s: {s} \t cns: {cns} \t nss: {nss} \t t: {cns * nss}")
 
-    t += cns * nss
+    t = cns * nss
+    d = cns * calculate_nss_idp(s)
+    print(f"s: {s:<5} cns: {cns:<15} nss: {nss:<15} t: {t:<15} d: {d}")
 
     x.append(s)
-    y.append(t)
+    t_plt.append(t)
+    d_plt.append(d)
 
 print("-" * 50)
 
+print(f"t accumul.: {sum(t_plt)}")
+print(f"d accumul.: {sum(d_plt)}")
+
 fig, ax = plt.subplots(1, 2)
-ax[0].plot(x, y, "-o")
-ax[1].plot(x, y, "-o")
-ax[1].set_yscale("log")
+ax[0].plot(x, t_plt, "-o", label="DP")
+ax[0].plot(x, list(map(lambda t, d: t - d, t_plt, d_plt)), "-o", label="IDP")
+ax[0].legend()
+
+ax[1].semilogy(x, list(map(lambda t: max(1, t), t_plt)), "-o", label="DP")
+ax[1].semilogy(
+    x, list(map(lambda t, d: max(1, t - d), t_plt, d_plt)), "-o", label="IDP"
+)
+ax[1].legend()
+# ax[1].set_yscale("log")
+ax[1].set_ylim(bottom=1)
 
 plt.tight_layout()
 plt.show()
