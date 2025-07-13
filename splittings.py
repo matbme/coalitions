@@ -22,15 +22,18 @@ def calculate_nss(s: int) -> int:
 
 x = []
 y = []
-for smax in range(2, n + 1):
-    t: float = 0
-    for s in range(1, n + 1):
-        cns = possible_subsets(n, smax)
-        nss = calculate_nss(smax)
-        t += cns * nss
+for s in range(1, n + 1):
+    t = 0
+    cns = possible_subsets(n, s)
+    nss = calculate_nss(s)
+    print(f"s: {s} \t cns: {cns} \t nss: {nss} \t t: {cns * nss}")
 
-    x.append(smax)
+    t += cns * nss
+
+    x.append(s)
     y.append(t)
+
+print("-" * 50)
 
 fig, ax = plt.subplots(1, 2)
 ax[0].plot(x, y, "-o")
