@@ -2,6 +2,8 @@
 from math import factorial, ceil
 import matplotlib.pyplot as plt
 
+plt.style.use("seaborn-v0_8-colorblind")
+
 n = 25
 
 
@@ -65,8 +67,7 @@ ax[1].semilogy(
     x, list(map(lambda t, d: max(1, t - d), t_plt, d_plt)), "-o", label="IDP"
 )
 ax[1].legend()
-# ax[1].set_yscale("log")
 ax[1].set_ylim(bottom=1)
 
 plt.tight_layout()
-plt.show()
+plt.savefig("splittings.pdf")
