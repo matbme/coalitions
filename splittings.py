@@ -25,7 +25,7 @@ def calculate_nss(s: int) -> int:
 def calculate_nss_idp(s: int) -> int:
     result = 0
     for spp in range(ceil(s / 2), s):
-        if spp <= n - s:
+        if spp <= n - s or s == n:
             continue
 
         if (s - spp) == spp:
@@ -42,11 +42,10 @@ d_plt = []
 
 for s in range(1, n + 1):
     cns = possible_subsets(n, s)
-    nss = calculate_nss(s)
 
-    t = cns * nss
+    t = cns * calculate_nss(s)
     d = cns * calculate_nss_idp(s)
-    print(f"s: {s:<5} cns: {cns:<15} nss: {nss:<15} t: {t:<15} d: {d}")
+    print(f"s: {s:<5} cns: {cns:<15} t: {t:<15} d: {d}")
 
     x.append(s)
     t_plt.append(t)

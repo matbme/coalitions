@@ -57,7 +57,8 @@ def compute_f2(c):
             print(f"Partitioned set into {l} and {r}")
 
             # E*
-            if len(r) > n - (len(l) + len(r)) and len(l) + len(r) != n:
+            spp = max(len(l), len(r))
+            if spp > n - len(c) and len(c) != n:
                 print("Ignoring set partition")
                 continue
 
